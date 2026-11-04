@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+import Icone from '../components/Icone.astro';
+---
+
+<Base titulo="Página não encontrada">
+  <section class="erro container">
+    <span class="erro__pata balanca"><Icone nome="pata" /></span>
+    <h1 class="entra" style="--i:1">Essa página fugiu.</h1>
+    <p class="entra" style="--i:2">A página que você procurou não existe. Mas os bichos continuam lá na página inicial.</p>
+    <a href="/" class="btn entra" style="--i:3"><Icone nome="casa" /> Voltar pro início</a>
+  </section>
+</Base>
+
+<style>
+  .erro {
+    text-align: center;
+    padding-block: clamp(80px, 14vw, 180px);
+    max-width: 560px;
+  }
+
+  .erro__pata {
+    display: inline-grid;
+    place-items: center;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: var(--verde-claro);
+    color: var(--verde);
+    margin-bottom: 24px;
+  }
+
+  .erro__pata :global(svg) {
+    width: 48px;
+    height: 48px;
+  }
+
+  .erro p {
+    margin: 18px 0 32px;
+    color: var(--tinta-suave);
+    font-size: 1.15rem;
+  }
+</style>

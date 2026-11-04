@@ -1,0 +1,236 @@
+---
+import type { Animal } from '../data/animais';
+import { rotulos, mesAno } from '../data/animais';
+import { linkWhatsapp } from '../data/site';
+import Foto from './Foto.astro';
+import Icone from './Icone.astro';
+
+interface Props {
+  animal: Animal;
+  prioridade?: boolean;
+}
+const { animal, prioridade = false } = Astro.props;
+const adotado = animal.status === 'adotado';
+const href = `/animais/${animal.slug}/`;
+const whatsapp = linkWhatsapp(`Olá! Tenho interesse em adotar ${animal.sexo === 'femea' ? 'a' : 'o'} ${animal.nome} 💚`);
+---
+
+<article class:list={['card', { 'card--adotado': adotado }]} data-especie={animal.especie} data-porte={animal.porte}>
+  <a href={href} class="card__foto" aria-label={`Ver ${animal.nome}`}>
+    <Foto animal={animal} prioridade={prioridade} />
+    <span class="card__especie selo selo--neutro">{rotulos.especie[animal.especie]}</span>
+    {
+      adotado ? (
+        <span class="card__faixa">
+          <Icone nome="casa" /> Adotad{animal.sexo === 'femea' ? 'a' : 'o'}{animal.dataAdocao ? ` em ${mesAno(animal.dataAdocao)}` : ''}
+        </span>
+      ) : (
+        <span class="card__pata">
+          <Icone nome="pata" />
+        </span>
+      )
+    }
+  </a>
+
+  <div class="card__corpo">
+    <header class="card__cabeca">
+      <h3><a href={href}>{animal.nome}</a></h3>
+      <span class="card__sexo" title={rotulos.sexo[animal.sexo]} aria-label={rotulos.sexo[animal.sexo]}>
+        {animal.sexo === 'femea' ? '♀' : '♂'}
+      </span>
+    </header>
+    <p class="card__texto">{animal.personalidade}</p>
+
+    <ul class="card__selos" aria-label="Informações">
+      <li class="selo selo--neutro">{animal.idade}</li>
+      <li class="selo selo--neutro">{rotulos.porte[animal.porte].replace('Porte ', '')}</li>
+      {
+        animal.castrado ? (
+          <li class="selo selo--ok">
+            <Icone nome="check" /> Castrad{animal.sexo === 'femea' ? 'a' : 'o'}
+          </li>
+        ) : (
+          <li class="selo selo--aviso">Castração pela ONG</li>
+        )
+      }
+    </ul>
+
+    {
+      !adotado && (
+        <a class="btn card__btn" href={whatsapp} target="_blank" rel="noopener">
+          <Icone nome="coracao" class="pulsa" /> Quero adotar
+        </a>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .card {
+    --raio-card: var(--raio);
+    display: flex;
+    flex-direction: column;
+    background: var(--branco);
+    border-radius: var(--raio-card);
+    overflow: hidden;
+    box-shadow: var(--sombra-leve);
+    border: 1px solid rgb(27 74 28 / 0.06);
+    transition: transform 0.5s var(--mola), box-shadow 0.5s var(--suave);
+    will-change: transform;
+  }
+
+  .card:hover {
+    transform: translateY(-8px) rotate(-0.6deg);
+    box-shadow: var(--sombra);
+  }
+
+  .card__foto {
+    position: relative;
+    display: block;
+    margin: 10px;
+    border-radius: calc(var(--raio-card) - 10px);
+    overflow: hidden;
+  }
+
+  .card__foto :global(.foto) {
+    border-radius: inherit;
+  }
+
+  .card:hover .card__foto :global(img) {
+    transform: scale(1.06);
+  }
+
+  .card:hover .card__foto :global(svg) {
+    transform: scale(1.08) rotate(-3deg);
+  }
+
+  .card__especie {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgb(255 253 248 / 0.9);
+    backdrop-filter: blur(6px);
+  }
+
+  .card__pata {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--branco);
+    color: var(--verde);
+    box-shadow: 0 6px 16px -6px rgb(0 0 0 / 0.3);
+    transform: scale(0) rotate(-30deg);
+    transition: transform 0.5s var(--mola);
+  }
+
+  .card__pata :global(svg) {
+    width: 22px;
+    height: 22px;
+  }
+
+  .card:hover .card__pata {
+    transform: scale(1) rotate(0);
+  }
+
+  .card__faixa {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 12px 16px;
+    background: linear-gradient(to top, rgb(17 48 15 / 0.85), transparent);
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card__faixa :global(svg) {
+    width: 18px;
+    height: 18px;
+  }
+
+  .card__corpo {
+    padding: 8px 22px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+  }
+
+  .card__cabeca {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .card__cabeca h3 {
+    font-size: 1.7rem;
+  }
+
+  .card__cabeca a {
+    text-decoration: none;
+  }
+
+  .card__sexo {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--verde);
+    line-height: 1;
+  }
+
+  .card__texto {
+    color: var(--tinta-suave);
+    font-size: 1rem;
+  }
+
+  .card__selos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .card__btn {
+    margin-top: auto;
+    width: 100%;
+    padding-block: 13px;
+  }
+
+  /* Adotado */
+  .card--adotado {
+    background: var(--areia);
+    box-shadow: none;
+    border-color: transparent;
+  }
+
+  .card--adotado .card__foto :global(img),
+  .card--adotado .card__foto :global(svg) {
+    filter: saturate(0.6);
+    transition: filter 0.6s, transform 0.7s var(--mola);
+  }
+
+  .card--adotado:hover .card__foto :global(img),
+  .card--adotado:hover .card__foto :global(svg) {
+    filter: saturate(1);
+  }
+
+  .card--adotado .card__corpo {
+    gap: 8px;
+    padding-bottom: 18px;
+  }
+
+  .card--adotado .card__cabeca h3 {
+    font-size: 1.4rem;
+  }
+</style>

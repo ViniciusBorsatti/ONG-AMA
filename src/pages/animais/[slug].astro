@@ -1,0 +1,310 @@
+---
+import Base from '../../layouts/Base.astro';
+import { site, linkWhatsapp } from '../../data/site';
+import { animais, disponiveis, rotulos, mesAno, type Animal } from '../../data/animais';
+import Foto from '../../components/Foto.astro';
+import CardAnimal from '../../components/CardAnimal.astro';
+import Icone from '../../components/Icone.astro';
+
+export function getStaticPaths() {
+  return animais.map((animal) => ({ params: { slug: animal.slug }, props: { animal } }));
+}
+
+const { animal } = Astro.props as { animal: Animal };
+const adotado = animal.status === 'adotado';
+const fem = animal.sexo === 'femea';
+const outros = disponiveis.filter((a) => a.slug !== animal.slug).slice(0, 3);
+const whatsapp = linkWhatsapp(`Olá! Tenho interesse em adotar ${fem ? 'a' : 'o'} ${animal.nome} 💚`);
+
+const fichas = [
+  { rotulo: 'Espécie', valor: rotulos.especie[animal.especie] },
+  { rotulo: 'Sexo', valor: rotulos.sexo[animal.sexo] },
+  { rotulo: 'Idade', valor: animal.idade },
+  { rotulo: 'Porte', valor: rotulos.porte[animal.porte].replace('Porte ', '') },
+  { rotulo: fem ? 'Castrada' : 'Castrado', valor: animal.castrado ? 'Sim' : 'Ainda não (a ONG faz)' },
+  { rotulo: fem ? 'Vacinada' : 'Vacinado', valor: animal.vacinado ? 'Sim' : 'Em andamento' },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: `${animal.nome} para adoção`,
+  description: animal.personalidade,
+  url: new URL(Astro.url.pathname, Astro.site).toString(),
+  isPartOf: { '@type': 'WebSite', name: site.nome, url: site.url },
+};
+---
+
+<Base titulo={`${animal.nome} · ${adotado ? 'Adotad' + (fem ? 'a' : 'o') : 'para adoção'}`} descricao={animal.personalidade} jsonLd={jsonLd}>
+  <article class="animal">
+    <div class="container">
+      <a href="/#animais" class="voltar entra" style="--i:0">
+        <Icone nome="seta" /> Todos os animais
+      </a>
+
+      <div class="animal__grade">
+        <div class="animal__foto entra-foto">
+          <Foto animal={animal} largura={960} sizes="(min-width: 900px) 45vw, 100vw" prioridade class="animal__img" />
+          {
+            adotado && (
+              <span class="animal__faixa">
+                <Icone nome="casa" /> Adotad{fem ? 'a' : 'o'}
+                {animal.dataAdocao ? ` em ${mesAno(animal.dataAdocao)}` : ''}
+              </span>
+            )
+          }
+        </div>
+
+        <div class="animal__info">
+          <span class="rotulo entra" style="--i:1">{adotado ? 'Final feliz' : 'Procurando um lar'}</span>
+          <h1 class="entra" style="--i:2">
+            {animal.nome} <span class="animal__sexo">{fem ? '♀' : '♂'}</span>
+          </h1>
+          <p class="animal__personalidade entra" style="--i:3">{animal.personalidade}</p>
+          {animal.historia && <p class="animal__historia entra" style="--i:4">{animal.historia}</p>}
+
+          {
+            animal.tags && (
+              <ul class="animal__tags entra" style="--i:5">
+                {animal.tags.map((t) => (
+                  <li class="selo">{t}</li>
+                ))}
+              </ul>
+            )
+          }
+
+          <dl class="ficha entra" style="--i:6">
+            {
+              fichas.map((f) => (
+                <div>
+                  <dt>{f.rotulo}</dt>
+                  <dd>{f.valor}</dd>
+                </div>
+              ))
+            }
+          </dl>
+
+          {
+            adotado ? (
+              <div class="animal__adotado entra" style="--i:7">
+                <Icone nome="coracao" class="pulsa" />
+                <p>
+                  {animal.nome} já tem uma família. Mas tem outros bichos esperando. <a href="/#animais">Veja quem está disponível.</a>
+                </p>
+              </div>
+            ) : (
+              <div class="animal__acoes entra" style="--i:7">
+                <a href={whatsapp} target="_blank" rel="noopener" class="btn btn--laranja">
+                  <Icone nome="whatsapp" /> Quero adotar {fem ? 'a' : 'o'} {animal.nome}
+                </a>
+                <a href="/#como-adotar" class="btn btn--claro">
+                  Como funciona
+                </a>
+              </div>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </article>
+
+  {
+    outros.length > 0 && (
+      <section class="secao outros">
+        <div class="container">
+          <div class="secao-cabeca revela-lado">
+            <span class="rotulo">Mais bichos</span>
+            <h2>Outros esperando um lar</h2>
+          </div>
+          <div class="grade grade-revela">
+            {outros.map((a) => (
+              <CardAnimal animal={a} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  .animal {
+    padding-block: clamp(24px, 4vw, 48px) clamp(60px, 8vw, 100px);
+  }
+
+  .voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    font-weight: 800;
+    color: var(--verde);
+    margin-bottom: 28px;
+  }
+
+  .voltar :global(svg) {
+    width: 18px;
+    height: 18px;
+    transform: rotate(180deg);
+    transition: transform 0.3s var(--mola);
+  }
+
+  .voltar:hover :global(svg) {
+    transform: rotate(180deg) translateX(4px);
+  }
+
+  .animal__grade {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: start;
+  }
+
+  .animal__foto {
+    position: sticky;
+    top: 100px;
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow: var(--sombra);
+    border: 8px solid var(--branco);
+  }
+
+  .animal__faixa {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 18px 24px;
+    background: linear-gradient(to top, rgb(17 48 15 / 0.85), transparent);
+    color: #fff;
+    font-weight: 800;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .animal__faixa :global(svg) {
+    width: 22px;
+    height: 22px;
+  }
+
+  .animal__sexo {
+    color: var(--verde);
+    font-size: 0.6em;
+    vertical-align: middle;
+  }
+
+  .animal__personalidade {
+    margin-top: 20px;
+    font-size: 1.35rem;
+    font-family: var(--fonte-titulo);
+    font-style: italic;
+    font-weight: 500;
+    color: var(--verde-escuro);
+  }
+
+  .animal__historia {
+    margin-top: 16px;
+    font-size: 1.08rem;
+    color: var(--tinta-suave);
+  }
+
+  .animal__tags {
+    list-style: none;
+    margin: 20px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ficha {
+    margin: 32px 0 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .ficha div {
+    padding: 14px 16px;
+    background: var(--branco);
+    border-radius: 18px;
+    border: 1px solid rgb(27 74 28 / 0.08);
+    transition: transform 0.4s var(--mola), box-shadow 0.3s;
+  }
+
+  .ficha div:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--sombra-leve);
+  }
+
+  .ficha dt {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--tinta-suave);
+  }
+
+  .ficha dd {
+    margin: 4px 0 0;
+    font-weight: 800;
+    color: var(--verde-profundo);
+  }
+
+  .animal__acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 32px;
+  }
+
+  .animal__adotado {
+    margin-top: 32px;
+    padding: 22px 24px;
+    border-radius: 22px;
+    background: var(--verde-claro);
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    color: var(--verde-escuro);
+  }
+
+  .animal__adotado :global(svg) {
+    width: 26px;
+    height: 26px;
+    flex: none;
+    color: #e5484d;
+  }
+
+  .animal__adotado a {
+    font-weight: 800;
+  }
+
+  .outros {
+    background: var(--areia);
+  }
+
+  .grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 24px;
+  }
+
+  @media (max-width: 820px) {
+    .animal__grade {
+      grid-template-columns: 1fr;
+    }
+
+    .animal__foto {
+      position: static;
+      max-width: 520px;
+      margin-inline: auto;
+    }
+
+    .ficha {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

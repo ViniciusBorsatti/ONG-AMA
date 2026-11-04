@@ -1,0 +1,175 @@
+---
+import { site, linkWhatsapp } from '../data/site';
+import Logo from './Logo.astro';
+import Icone from './Icone.astro';
+const ano = new Date().getFullYear();
+---
+
+<footer class="rodape" id="contato">
+  <div class="container rodape__grade">
+    <div class="rodape__sobre">
+      <Logo class="rodape__logo" />
+      <p>{site.nomeCompleto}</p>
+      <p class="rodape__descricao">{site.descricao}</p>
+    </div>
+
+    <div class="rodape__coluna">
+      <h4>{site.contato.titulo}</h4>
+      <p>{site.contato.texto}</p>
+      <div class="rodape__links">
+        <a href={linkWhatsapp()} target="_blank" rel="noopener" class="rodape__link">
+          <Icone nome="whatsapp" /> {site.whatsapp ? 'WhatsApp' : 'Mensagem pelo Instagram'}
+        </a>
+        <a href={site.instagramUrl} target="_blank" rel="noopener" class="rodape__link">
+          <Icone nome="instagram" /> @{site.instagram}
+        </a>
+        {
+          site.email && (
+            <a href={`mailto:${site.email}`} class="rodape__link">
+              {site.email}
+            </a>
+          )
+        }
+      </div>
+    </div>
+
+    <div class="rodape__coluna">
+      <h4>Onde estamos</h4>
+      <address>
+        {site.endereco.rua}<br />
+        {site.endereco.bairro}, {site.endereco.cidade}/{site.endereco.uf}<br />
+        CEP {site.endereco.cep}
+      </address>
+      <a href={site.endereco.mapa} target="_blank" rel="noopener" class="rodape__link">
+        <Icone nome="mapa" /> Ver no mapa
+      </a>
+    </div>
+  </div>
+
+  <div class="container rodape__base">
+    <span>© {ano} {site.nome}. Todos os bichos reservados. 🐾</span>
+    <span>{site.rodape.nota}</span>
+  </div>
+</footer>
+
+<style>
+  .rodape {
+    background: var(--verde-profundo);
+    color: rgb(255 255 255 / 0.82);
+    padding-top: clamp(60px, 8vw, 100px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rodape::before {
+    content: '';
+    position: absolute;
+    inset: auto -10% -40% auto;
+    width: 60vw;
+    height: 60vw;
+    max-width: 700px;
+    max-height: 700px;
+    background: radial-gradient(circle, rgb(47 122 43 / 0.5), transparent 65%);
+    pointer-events: none;
+  }
+
+  .rodape__grade {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 48px;
+    position: relative;
+  }
+
+  .rodape__sobre p {
+    margin-top: 16px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .rodape__sobre .rodape__descricao {
+    font-weight: 400;
+    color: rgb(255 255 255 / 0.7);
+    max-width: 380px;
+  }
+
+  .rodape :global(.rodape__logo) {
+    color: #fff;
+  }
+
+  .rodape :global(.rodape__logo small) {
+    color: rgb(255 255 255 / 0.6);
+  }
+
+  .rodape :global(.rodape__logo .logo__marca) {
+    background: #fff;
+    color: var(--verde);
+  }
+
+  .rodape :global(.rodape__logo .logo__coracao) {
+    color: var(--verde);
+  }
+
+  .rodape :global(.rodape__logo .logo__pata) {
+    color: #fff;
+  }
+
+  .rodape h4 {
+    color: #fff;
+    font-size: 1.25rem;
+    margin-bottom: 12px;
+  }
+
+  address {
+    font-style: normal;
+    margin-bottom: 14px;
+    line-height: 1.7;
+  }
+
+  .rodape__links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .rodape__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #fff;
+    font-weight: 700;
+    width: fit-content;
+    transition: transform 0.3s var(--mola), color 0.3s;
+  }
+
+  .rodape__link :global(svg) {
+    width: 20px;
+    height: 20px;
+    color: var(--verde-suave);
+  }
+
+  .rodape__link:hover {
+    transform: translateX(4px);
+    color: var(--verde-suave);
+  }
+
+  .rodape__base {
+    margin-top: clamp(40px, 6vw, 70px);
+    padding-block: 24px;
+    border-top: 1px solid rgb(255 255 255 / 0.12);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: rgb(255 255 255 / 0.55);
+  }
+
+  @media (max-width: 820px) {
+    .rodape__grade {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+  }
+</style>

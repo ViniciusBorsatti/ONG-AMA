@@ -1,0 +1,800 @@
+---
+import Base from '../layouts/Base.astro';
+import { site, linkWhatsapp } from '../data/site';
+import { disponiveis, adotados } from '../data/animais';
+import CardAnimal from '../components/CardAnimal.astro';
+import Foto from '../components/Foto.astro';
+import Letreiro from '../components/Letreiro.astro';
+import Patas from '../components/Patas.astro';
+import Icone from '../components/Icone.astro';
+
+const destaques = disponiveis.slice(0, 3);
+const caes = disponiveis.filter((a) => a.especie === 'cachorro').length;
+const gatos = disponiveis.filter((a) => a.especie === 'gato').length;
+const icones = { pix: 'pix', coracao: 'coracao', mao: 'mao', caixa: 'caixa' } as const;
+---
+
+<Base>
+  <!-- TOPO -->
+  <section class="topo">
+    <Patas />
+    <div class="container topo__grade">
+      <div class="topo__texto">
+        <span class="rotulo entra" style="--i:0">{site.nomeCompleto}</span>
+        <h1 class="entra" style="--i:1">{site.hero.titulo}</h1>
+        <p class="topo__p entra" style="--i:2">{site.hero.texto}</p>
+        <div class="topo__botoes entra" style="--i:3">
+          <a href="#animais" class="btn"><Icone nome="pata" /> {site.hero.botaoPrincipal}</a>
+          <a href="#ajudar" class="btn btn--claro">{site.hero.botaoSecundario}</a>
+        </div>
+        <ul class="topo__garantias entra" style="--i:4">
+          <li><Icone nome="check" /> Adoção gratuita</li>
+          <li><Icone nome="check" /> Vacinados</li>
+          <li><Icone nome="check" /> Castrados</li>
+        </ul>
+      </div>
+
+      <div class="topo__fotos entra-foto" aria-hidden="true">
+        <div class="topo__blob gira"></div>
+        {
+          destaques.map((a, i) => (
+            <a href={`/animais/${a.slug}/`} class:list={['topo__foto', `topo__foto--${i + 1}`, 'flutua']} style={`--d:${i * 0.9}s`}>
+              <Foto animal={a} largura={480} sizes="(min-width: 900px) 30vw, 60vw" prioridade={i === 0} />
+              <span class="topo__nome">{a.nome}</span>
+            </a>
+          ))
+        }
+        <span class="topo__balao flutua" style="--d:2.2s">
+          <Icone nome="coracao" class="pulsa" /> {disponiveis.length} esperando um lar
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <Letreiro />
+
+  <!-- NÚMEROS -->
+  <section class="numeros">
+    <div class="container numeros__grade">
+      {
+        site.numeros.map((n) => (
+          <div class="numero revela">
+            <span class="numero__valor">
+              <span class="contador" style={`--alvo:${n.valor}`} data-alvo={n.valor} />{n.sufixo}
+            </span>
+            <span class="numero__legenda">{n.legenda}</span>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- ANIMAIS -->
+  <section class="secao animais" id="animais">
+    <div class="container">
+      <div class="animais__topo">
+        <div class="secao-cabeca revela-lado">
+          <span class="rotulo">Adoção</span>
+          <h2>{site.adocao.titulo}</h2>
+          <p>{site.adocao.texto}</p>
+        </div>
+
+        <fieldset class="filtro revela">
+          <legend class="visualmente-oculto">Filtrar por espécie</legend>
+          <input type="radio" name="filtro" id="f-todos" class="visualmente-oculto" checked />
+          <label for="f-todos">Todos <small>{disponiveis.length}</small></label>
+          <input type="radio" name="filtro" id="f-cachorro" class="visualmente-oculto" />
+          <label for="f-cachorro">Cachorros <small>{caes}</small></label>
+          <input type="radio" name="filtro" id="f-gato" class="visualmente-oculto" />
+          <label for="f-gato">Gatos <small>{gatos}</small></label>
+        </fieldset>
+      </div>
+
+      <div class="grade grade-revela">
+        {disponiveis.map((a, i) => <CardAnimal animal={a} prioridade={i < 3} />)}
+      </div>
+      <p class="vazio">Nenhum animal nessa categoria agora. Volte logo! 🐾</p>
+    </div>
+  </section>
+
+  <!-- ADOTADOS -->
+  {
+    adotados.length > 0 && (
+      <section class="secao adotados">
+        <div class="container">
+          <div class="secao-cabeca revela-lado">
+            <span class="rotulo">Finais felizes</span>
+            <h2>{site.adotados.titulo}</h2>
+            <p>{site.adotados.texto}</p>
+          </div>
+          <div class="grade grade--pequena grade-revela">
+            {adotados.map((a) => (
+              <CardAnimal animal={a} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- COMO ADOTAR -->
+  <section class="secao passos" id="como-adotar">
+    <div class="container">
+      <div class="secao-cabeca revela-lado">
+        <span class="rotulo">Passo a passo</span>
+        <h2>{site.comoAdotar.titulo}</h2>
+      </div>
+      <ol class="passos__lista grade-revela">
+        {
+          site.comoAdotar.passos.map((p, i) => (
+            <li class="passo">
+              <span class="passo__numero">{i + 1}</span>
+              <h3>{p.titulo}</h3>
+              <p>{p.texto}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- AJUDAR -->
+  <section class="secao ajudar" id="ajudar">
+    <div class="container">
+      <div class="ajudar__grade">
+        <div class="ajudar__texto revela-lado">
+          <span class="rotulo">Faça parte</span>
+          <h2>{site.ajudar.titulo}</h2>
+          <p>{site.ajudar.texto}</p>
+
+          <div class="pix">
+            <div class="pix__cabeca">
+              <Icone nome="pix" /> <strong>Doe pelo Pix</strong>
+            </div>
+            {
+              site.doacao.pix ? (
+                <>
+                  <span class="pix__chave">{site.doacao.pix}</span>
+                  <small>Chave {site.doacao.pixTipo} · {site.doacao.banco}</small>
+                </>
+              ) : (
+                <>
+                  <span class="pix__chave pix__chave--pendente">Chave Pix em breve</span>
+                  <small>Enquanto isso, chame a gente no Instagram.</small>
+                </>
+              )
+            }
+          </div>
+        </div>
+
+        <ul class="ajudar__lista grade-revela">
+          {
+            site.ajudar.formas.map((f) => (
+              <li class="ajuda">
+                <span class="ajuda__icone">
+                  <Icone nome={icones[f.icone]} />
+                </span>
+                <h3>{f.titulo}</h3>
+                <p>{f.texto}</p>
+                {f.link ? (
+                  <a href={f.link} target="_blank" rel="noopener" class="ajuda__link">
+                    {f.linkTexto} <Icone nome="seta" />
+                  </a>
+                ) : (
+                  <a href={linkWhatsapp(`Olá! Quero ajudar a ONG AMA: ${f.titulo.toLowerCase()}`)} target="_blank" rel="noopener" class="ajuda__link">
+                    Falar com a ONG <Icone nome="seta" />
+                  </a>
+                )}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHAMADA FINAL -->
+  <section class="chamada">
+    <div class="container chamada__caixa revela">
+      <Patas />
+      <h2>Ainda em dúvida? Vem conhecer eles pessoalmente.</h2>
+      <p>O abrigo fica em {site.endereco.cidade}. É só combinar um horário.</p>
+      <a href={linkWhatsapp('Olá! Quero visitar o abrigo da ONG AMA.')} target="_blank" rel="noopener" class="btn btn--laranja">
+        <Icone nome="whatsapp" /> Combinar uma visita
+      </a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* TOPO */
+  .topo {
+    position: relative;
+    padding-block: clamp(40px, 7vw, 96px) clamp(60px, 8vw, 110px);
+    overflow: hidden;
+  }
+
+  .topo::before {
+    content: '';
+    position: absolute;
+    inset: -20% -10% auto auto;
+    width: 55vw;
+    height: 55vw;
+    max-width: 760px;
+    max-height: 760px;
+    background: radial-gradient(circle, var(--verde-claro) 0%, transparent 65%);
+    z-index: 0;
+  }
+
+  .topo__grade {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    align-items: center;
+    gap: clamp(32px, 6vw, 80px);
+  }
+
+  .topo__p {
+    margin-top: 24px;
+    font-size: clamp(1.1rem, 1.6vw, 1.3rem);
+    color: var(--tinta-suave);
+    max-width: 520px;
+  }
+
+  .topo__botoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 34px;
+  }
+
+  .topo__garantias {
+    list-style: none;
+    padding: 0;
+    margin: 34px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--verde-escuro);
+  }
+
+  .topo__garantias li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .topo__garantias :global(svg) {
+    width: 18px;
+    height: 18px;
+    color: var(--verde);
+  }
+
+  /* Composição de fotos */
+  .topo__fotos {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    max-width: 560px;
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  .topo__blob {
+    position: absolute;
+    inset: 6%;
+    border-radius: 58% 42% 55% 45% / 45% 55% 45% 55%;
+    background: linear-gradient(135deg, var(--verde-suave), var(--verde-claro));
+    opacity: 0.9;
+  }
+
+  .topo__foto {
+    position: absolute;
+    display: block;
+    border-radius: 36px;
+    overflow: hidden;
+    box-shadow: var(--sombra);
+    border: 6px solid var(--branco);
+    text-decoration: none;
+    transition: transform 0.5s var(--mola), box-shadow 0.4s;
+  }
+
+  .topo__foto:hover {
+    z-index: 5;
+    box-shadow: 0 30px 60px -24px rgb(27 74 28 / 0.5);
+  }
+
+  .topo__foto--1 {
+    width: 54%;
+    left: 4%;
+    top: 10%;
+    --rot: -5deg;
+    z-index: 3;
+  }
+
+  .topo__foto--2 {
+    width: 42%;
+    right: 2%;
+    top: 2%;
+    --rot: 6deg;
+    z-index: 2;
+  }
+
+  .topo__foto--3 {
+    width: 46%;
+    right: 8%;
+    bottom: 4%;
+    --rot: 3deg;
+    z-index: 4;
+  }
+
+  .topo__nome {
+    position: absolute;
+    left: 14px;
+    bottom: 12px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgb(255 253 248 / 0.92);
+    color: var(--verde-profundo);
+    font-family: var(--fonte-titulo);
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+
+  .topo__balao {
+    position: absolute;
+    left: 2%;
+    bottom: 10%;
+    z-index: 6;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    background: var(--branco);
+    border-radius: 999px;
+    box-shadow: var(--sombra);
+    font-weight: 800;
+    color: var(--verde-profundo);
+    white-space: nowrap;
+    --rot: -2deg;
+  }
+
+  .topo__balao :global(svg) {
+    width: 22px;
+    height: 22px;
+    color: #e5484d;
+  }
+
+  /* NÚMEROS */
+  .numeros {
+    padding-block: clamp(50px, 7vw, 90px) 0;
+  }
+
+  .numeros__grade {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .numero {
+    text-align: center;
+    padding: 28px 18px;
+    background: var(--branco);
+    border-radius: var(--raio);
+    border: 1px solid rgb(27 74 28 / 0.06);
+  }
+
+  .numero__valor {
+    display: block;
+    font-family: var(--fonte-titulo);
+    font-size: clamp(2.6rem, 5vw, 4rem);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--verde);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .numero__legenda {
+    display: block;
+    margin-top: 8px;
+    font-weight: 700;
+    color: var(--tinta-suave);
+  }
+
+  /* ANIMAIS */
+  .animais__topo {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .filtro {
+    border: 0;
+    margin: 0 0 clamp(36px, 5vw, 60px);
+    padding: 6px;
+    display: inline-flex;
+    gap: 4px;
+    background: var(--areia);
+    border-radius: 999px;
+  }
+
+  .filtro label {
+    cursor: pointer;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-weight: 800;
+    color: var(--tinta-suave);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.35s var(--suave), color 0.3s, transform 0.35s var(--mola);
+    user-select: none;
+  }
+
+  .filtro label small {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgb(27 74 28 / 0.08);
+  }
+
+  .filtro input:checked + label {
+    background: var(--verde);
+    color: #fff;
+    transform: scale(1.03);
+    box-shadow: 0 8px 18px -10px rgb(47 122 43 / 0.7);
+  }
+
+  .filtro input:checked + label small {
+    background: rgb(255 255 255 / 0.22);
+  }
+
+  .filtro input:focus-visible + label {
+    outline: 3px solid var(--laranja);
+    outline-offset: 2px;
+  }
+
+  .animais:has(#f-cachorro:checked) :global(.card[data-especie='gato']),
+  .animais:has(#f-gato:checked) :global(.card[data-especie='cachorro']) {
+    display: none;
+  }
+
+  .vazio {
+    display: none;
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--tinta-suave);
+    font-weight: 700;
+  }
+
+  .animais:has(#f-cachorro:checked) .grade:not(:has(:global(.card[data-especie='cachorro']))) + .vazio,
+  .animais:has(#f-gato:checked) .grade:not(:has(:global(.card[data-especie='gato']))) + .vazio {
+    display: block;
+  }
+
+  .grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 24px;
+  }
+
+  .grade--pequena {
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 18px;
+  }
+
+  /* ADOTADOS */
+  .adotados {
+    background: var(--areia);
+    position: relative;
+  }
+
+  /* PASSOS */
+  .passos__lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    counter-reset: passo;
+  }
+
+  .passo {
+    position: relative;
+    padding: 32px 26px 28px;
+    background: var(--branco);
+    border-radius: var(--raio);
+    border: 1px solid rgb(27 74 28 / 0.06);
+    transition: transform 0.5s var(--mola), box-shadow 0.4s;
+  }
+
+  .passo:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--sombra);
+  }
+
+  .passo__numero {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    background: var(--verde-claro);
+    color: var(--verde);
+    font-family: var(--fonte-titulo);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    transition: transform 0.5s var(--mola), background 0.3s, color 0.3s;
+  }
+
+  .passo:hover .passo__numero {
+    transform: rotate(-8deg) scale(1.1);
+    background: var(--verde);
+    color: #fff;
+  }
+
+  .passo h3 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+  }
+
+  .passo p {
+    color: var(--tinta-suave);
+  }
+
+  /* AJUDAR */
+  .ajudar {
+    background: var(--verde-profundo);
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ajudar::before {
+    content: '';
+    position: absolute;
+    inset: -30% auto auto -10%;
+    width: 50vw;
+    height: 50vw;
+    max-width: 600px;
+    max-height: 600px;
+    background: radial-gradient(circle, rgb(47 122 43 / 0.55), transparent 65%);
+  }
+
+  .ajudar__grade {
+    position: relative;
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: start;
+  }
+
+  .ajudar__texto h2 {
+    color: #fff;
+  }
+
+  .ajudar__texto > p {
+    margin-top: 16px;
+    font-size: 1.15rem;
+    color: rgb(255 255 255 / 0.75);
+    max-width: 440px;
+  }
+
+  .ajudar .rotulo {
+    color: var(--verde-suave);
+  }
+
+  .pix {
+    margin-top: 32px;
+    padding: 24px;
+    border-radius: 22px;
+    background: rgb(255 255 255 / 0.08);
+    border: 1px solid rgb(255 255 255 / 0.14);
+    backdrop-filter: blur(8px);
+  }
+
+  .pix__cabeca {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.05rem;
+    margin-bottom: 12px;
+  }
+
+  .pix__cabeca :global(svg) {
+    width: 26px;
+    height: 26px;
+    color: #4bd1b5;
+  }
+
+  .pix__chave {
+    display: block;
+    font-family: var(--fonte-titulo);
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    word-break: break-all;
+  }
+
+  .pix__chave--pendente {
+    color: rgb(255 255 255 / 0.6);
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .pix small {
+    color: rgb(255 255 255 / 0.6);
+  }
+
+  .ajudar__lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+
+  .ajuda {
+    padding: 26px;
+    border-radius: 24px;
+    background: rgb(255 255 255 / 0.06);
+    border: 1px solid rgb(255 255 255 / 0.1);
+    transition: background 0.4s, transform 0.5s var(--mola), border-color 0.4s;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ajuda:hover {
+    background: rgb(255 255 255 / 0.11);
+    border-color: rgb(255 255 255 / 0.25);
+    transform: translateY(-5px);
+  }
+
+  .ajuda__icone {
+    width: 50px;
+    height: 50px;
+    display: grid;
+    place-items: center;
+    border-radius: 16px;
+    background: var(--verde);
+    color: #fff;
+    margin-bottom: 6px;
+    transition: transform 0.5s var(--mola);
+  }
+
+  .ajuda:hover .ajuda__icone {
+    transform: rotate(-10deg) scale(1.1);
+  }
+
+  .ajuda__icone :global(svg) {
+    width: 26px;
+    height: 26px;
+  }
+
+  .ajuda h3 {
+    color: #fff;
+    font-size: 1.3rem;
+  }
+
+  .ajuda p {
+    color: rgb(255 255 255 / 0.72);
+    font-size: 0.98rem;
+    flex: 1;
+  }
+
+  .ajuda__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    font-weight: 800;
+    color: var(--verde-suave);
+    margin-top: 6px;
+  }
+
+  .ajuda__link :global(svg) {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.3s var(--mola);
+  }
+
+  .ajuda__link:hover :global(svg) {
+    transform: translateX(5px);
+  }
+
+  /* CHAMADA FINAL */
+  .chamada {
+    padding-block: clamp(60px, 8vw, 110px);
+  }
+
+  .chamada__caixa {
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    padding: clamp(48px, 7vw, 90px) clamp(24px, 5vw, 70px);
+    background: linear-gradient(135deg, var(--verde-claro), #f9f3e4);
+    border-radius: var(--raio);
+  }
+
+  .chamada__caixa h2 {
+    max-width: 640px;
+    margin-inline: auto;
+    position: relative;
+  }
+
+  .chamada__caixa p {
+    margin: 16px auto 30px;
+    font-size: 1.15rem;
+    color: var(--tinta-suave);
+    position: relative;
+  }
+
+  .chamada__caixa .btn {
+    position: relative;
+  }
+
+  /* RESPONSIVO */
+  @media (max-width: 980px) {
+    .passos__lista {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .topo__grade,
+    .ajudar__grade {
+      grid-template-columns: 1fr;
+    }
+
+    .topo__fotos {
+      max-width: 440px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .numeros__grade {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .numero {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 12px;
+      padding: 18px;
+    }
+
+    .numero__legenda {
+      margin: 0;
+    }
+
+    .passos__lista,
+    .ajudar__lista {
+      grid-template-columns: 1fr;
+    }
+
+    .filtro {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .filtro label {
+      padding: 10px 12px;
+      font-size: 0.9rem;
+    }
+
+    .topo__balao {
+      font-size: 0.85rem;
+      padding: 10px 14px;
+    }
+  }
+</style>

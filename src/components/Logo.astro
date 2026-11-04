@@ -1,0 +1,83 @@
+---
+// Logo provisória em CSS/SVG. Trocar pelo arquivo oficial da ONG quando chegar.
+import { site } from '../data/site';
+import Icone from './Icone.astro';
+interface Props {
+  class?: string;
+}
+const { class: cls } = Astro.props;
+---
+
+<a href="/" class:list={['logo', cls]} aria-label={`${site.nome} – início`}>
+  <span class="logo__marca">
+    <Icone nome="coracao" class="logo__coracao" />
+    <Icone nome="pata" class="logo__pata" />
+  </span>
+  <span class="logo__texto">
+    <strong>{site.nome}</strong>
+    <small>{site.cidade}</small>
+  </span>
+</a>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--verde-profundo);
+  }
+
+  .logo__marca {
+    position: relative;
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--verde);
+    color: #fff;
+    transition: transform 0.5s var(--mola);
+  }
+
+  .logo:hover .logo__marca {
+    transform: rotate(-12deg) scale(1.08);
+  }
+
+  .logo__marca :global(svg) {
+    position: absolute;
+  }
+
+  .logo__marca :global(.logo__coracao) {
+    width: 30px;
+    height: 30px;
+    color: rgb(255 255 255 / 0.95);
+  }
+
+  .logo__marca :global(.logo__pata) {
+    width: 14px;
+    height: 14px;
+    color: var(--verde);
+    transform: translateY(-1px);
+  }
+
+  .logo__texto {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+
+  .logo__texto strong {
+    font-family: var(--fonte-titulo);
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .logo__texto small {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--tinta-suave);
+    letter-spacing: 0.04em;
+  }
+</style>

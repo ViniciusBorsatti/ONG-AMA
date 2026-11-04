@@ -1,0 +1,142 @@
+---
+import Logo from './Logo.astro';
+import Icone from './Icone.astro';
+
+const links = [
+  { href: '/#animais', texto: 'Adotar' },
+  { href: '/#como-adotar', texto: 'Como funciona' },
+  { href: '/#ajudar', texto: 'Ajudar' },
+  { href: '/#contato', texto: 'Contato' },
+];
+---
+
+<header class="cabecalho">
+  <div class="container cabecalho__linha">
+    <Logo />
+
+    <input type="checkbox" id="menu" class="visualmente-oculto menu__toggle" />
+    <label for="menu" class="menu__botao" aria-label="Abrir menu">
+      <span></span><span></span><span></span>
+    </label>
+
+    <nav class="menu" aria-label="Principal">
+      {links.map((l) => <a href={l.href}>{l.texto}</a>)}
+      <a href="/#ajudar" class="btn btn--laranja menu__cta">
+        <Icone nome="coracao" /> Doar
+      </a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .cabecalho {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgb(251 248 241 / 0.6);
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  }
+
+  .cabecalho__linha {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    min-height: 76px;
+  }
+
+  .menu {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .menu > a:not(.btn) {
+    position: relative;
+    padding: 8px 14px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 700;
+    color: var(--verde-profundo);
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .menu > a:not(.btn):hover {
+    background: var(--verde-claro);
+    color: var(--verde-escuro);
+  }
+
+  .menu__cta {
+    margin-left: 10px;
+    padding: 11px 20px;
+  }
+
+  .menu__botao {
+    display: none;
+  }
+
+  @media (max-width: 760px) {
+    .menu__botao {
+      display: grid;
+      gap: 5px;
+      padding: 10px;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .menu__botao span {
+      display: block;
+      width: 24px;
+      height: 2.5px;
+      border-radius: 2px;
+      background: var(--verde-profundo);
+      transition: transform 0.35s var(--suave), opacity 0.2s;
+      transform-origin: center;
+    }
+
+    .menu__toggle:checked ~ .menu__botao span:nth-child(1) {
+      transform: translateY(7.5px) rotate(45deg);
+    }
+
+    .menu__toggle:checked ~ .menu__botao span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .menu__toggle:checked ~ .menu__botao span:nth-child(3) {
+      transform: translateY(-7.5px) rotate(-45deg);
+    }
+
+    .menu {
+      position: absolute;
+      left: var(--gutter);
+      right: var(--gutter);
+      top: calc(100% + 8px);
+      flex-direction: column;
+      align-items: stretch;
+      padding: 14px;
+      background: var(--branco);
+      border-radius: 22px;
+      box-shadow: var(--sombra);
+      opacity: 0;
+      transform: translateY(-12px) scale(0.98);
+      pointer-events: none;
+      transition: opacity 0.3s, transform 0.4s var(--suave);
+    }
+
+    .menu > a:not(.btn) {
+      padding: 12px 16px;
+      font-size: 1.05rem;
+    }
+
+    .menu__cta {
+      margin: 8px 0 0;
+    }
+
+    .menu__toggle:checked ~ .menu {
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
+    }
+  }
+</style>

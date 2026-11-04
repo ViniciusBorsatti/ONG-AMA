@@ -1,0 +1,56 @@
+---
+import { site } from '../data/site';
+import Icone from './Icone.astro';
+const itens = [...site.letreiro, ...site.letreiro];
+---
+
+<div class="letreiro" aria-hidden="true">
+  <div class="letreiro__trilho">
+    {
+      itens.map((t) => (
+        <span class="letreiro__item">
+          {t} <Icone nome="pata" />
+        </span>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .letreiro {
+    overflow: hidden;
+    background: var(--verde);
+    color: #fff;
+    padding-block: 16px;
+    transform: rotate(-1.2deg) scale(1.02);
+    margin-block: -8px;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 10px 30px -16px rgb(17 48 15 / 0.5);
+  }
+
+  .letreiro__trilho {
+    display: flex;
+    gap: 44px;
+    width: max-content;
+    padding-right: 44px;
+  }
+
+  .letreiro__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+    font-family: var(--fonte-titulo);
+    font-size: 1.5rem;
+    font-weight: 600;
+    font-style: italic;
+    white-space: nowrap;
+  }
+
+  .letreiro__item :global(svg) {
+    width: 22px;
+    height: 22px;
+    color: var(--verde-suave);
+    transform: rotate(-20deg);
+  }
+</style>
