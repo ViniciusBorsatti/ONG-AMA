@@ -1,7 +1,5 @@
 ---
-// Logo provisória em CSS/SVG. Trocar pelo arquivo oficial da ONG quando chegar.
 import { site } from '../data/site';
-import Icone from './Icone.astro';
 interface Props {
   class?: string;
 }
@@ -9,13 +7,10 @@ const { class: cls } = Astro.props;
 ---
 
 <a href="/" class:list={['logo', cls]} aria-label={`${site.nome} – início`}>
-  <span class="logo__marca">
-    <Icone nome="coracao" class="logo__coracao" />
-    <Icone nome="pata" class="logo__pata" />
-  </span>
+  <img src="/logo-simbolo.png" alt="" width="48" height="48" class="logo__marca" />
   <span class="logo__texto">
     <strong>{site.nome}</strong>
-    <small>{site.cidade}</small>
+    <small>Palmira Gobbi · {site.cidade}</small>
   </span>
 </a>
 
@@ -29,36 +24,14 @@ const { class: cls } = Astro.props;
   }
 
   .logo__marca {
-    position: relative;
-    width: 46px;
-    height: 46px;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    background: var(--verde);
-    color: #fff;
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
     transition: transform 0.5s var(--mola);
   }
 
   .logo:hover .logo__marca {
-    transform: rotate(-12deg) scale(1.08);
-  }
-
-  .logo__marca :global(svg) {
-    position: absolute;
-  }
-
-  .logo__marca :global(.logo__coracao) {
-    width: 30px;
-    height: 30px;
-    color: rgb(255 255 255 / 0.95);
-  }
-
-  .logo__marca :global(.logo__pata) {
-    width: 14px;
-    height: 14px;
-    color: var(--verde);
-    transform: translateY(-1px);
+    transform: rotate(-8deg) scale(1.08);
   }
 
   .logo__texto {
@@ -75,7 +48,7 @@ const { class: cls } = Astro.props;
   }
 
   .logo__texto small {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 700;
     color: var(--tinta-suave);
     letter-spacing: 0.04em;

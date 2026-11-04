@@ -21,7 +21,7 @@ const organizacao = {
   name: site.nomeCompleto,
   alternateName: site.nome,
   url: site.url,
-  logo: `${site.url}/favicon.svg`,
+  logo: `${site.url}/logo-ama.png`,
   sameAs: [site.instagramUrl],
   address: {
     '@type': 'PostalAddress',
@@ -42,7 +42,8 @@ const organizacao = {
     <title>{tituloCompleto}</title>
     <meta name="description" content={descricao} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
     <link rel="sitemap" href="/sitemap.xml" />
     <meta name="theme-color" content="#2f7a2b" />
     <meta property="og:type" content="website" />
