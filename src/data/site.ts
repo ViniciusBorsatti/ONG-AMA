@@ -26,14 +26,14 @@ export const site = {
   email: '', // TODO
   doacao: {
     pixTipo: 'CNPJ',
-    pix: '', // TODO: confirmar chave Pix com a ONG
-    banco: 'Sicoob Credisul', // TODO: confirmar
+    pix: '27.336.803/0001-78', // CNPJ, conforme a bio do Instagram
+    banco: 'Sicoob Crediauc (756) · Ag. 3067 · Conta 347302',
     assinaturas: 'https://picpay.me/ongAMAassinaturas',
   },
 
   numeros: [
     { valor: 320, sufixo: '+', legenda: 'animais adotados' },
-    { valor: 48, sufixo: '', legenda: 'esperando um lar' },
+    { valor: 9, sufixo: '', legenda: 'esperando um lar' },
     { valor: 12, sufixo: '', legenda: 'anos de resgates' },
   ],
 

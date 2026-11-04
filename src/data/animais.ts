@@ -3,6 +3,11 @@
 //
 // As fotos ficam em src/assets/img/animais/<foto>. Se o arquivo não existir,
 // o site mostra uma ilustração no lugar.
+//
+// ATENÇÃO: os animais abaixo vieram dos posts de adoção do Instagram da ONG
+// (campo `post`). Os nomes marcados com "nome provisório" foram inventados
+// porque o post não dizia o nome. Confirmar com a ONG: nome, idade, status
+// (quem já foi adotado) e se castrou.
 
 export type Especie = 'cachorro' | 'gato';
 export type Sexo = 'macho' | 'femea';
@@ -21,160 +26,175 @@ export interface Animal {
   castrado: boolean;
   vacinado?: boolean;
   foto: string;
-  cor: string; // cor de fundo da foto/ilustração (hex)
+  cor: string; // cor de fundo enquanto a foto carrega (hex)
   status: Status;
   dataAdocao?: string; // 'AAAA-MM'
   tags?: string[];
+  post?: string; // link do post no Instagram
 }
 
-// DADOS DE EXEMPLO (fictícios). Trocar pelos animais reais da ONG.
 export const animais: Animal[] = [
   {
-    slug: 'orelha',
-    nome: 'Orelha',
+    slug: 'bento',
+    nome: 'Bento', // nome provisório
     especie: 'cachorro',
     sexo: 'macho',
     porte: 'medio',
-    idade: '3 anos',
-    personalidade: 'Companheiro, calmo e apaixonado por carinho atrás da orelha.',
+    idade: 'Filhote',
+    personalidade: 'Sorriso de orelha a orelha. Vai ser o cão mais feliz da sua rua.',
     historia:
-      'Orelha foi resgatado depois de ser encontrado machucado na beira da estrada. Hoje está recuperado, adora dormir no sol e segue quem estiver com a coleira na mão.',
-    castrado: true,
+      'Bebê em busca de uma família amorosa e responsável. Porte pequeno para médio quando crescer. Adoção livre de correntes: a ONG faz uma entrevista antes para garantir que ele vai viver solto e feliz.',
+    castrado: false,
     vacinado: true,
-    foto: 'orelha.jpg',
-    cor: '#E8B97A',
+    foto: 'bandana.jpg',
+    cor: '#C9A27E',
     status: 'disponivel',
-    tags: ['dócil', 'bom com crianças'],
+    tags: ['filhote', 'porte P/M', 'livre de correntes'],
+    post: 'https://www.instagram.com/p/DdUowwmmpYx/',
+  },
+  {
+    slug: 'lila',
+    nome: 'Lila', // nome provisório
+    especie: 'cachorro',
+    sexo: 'femea',
+    porte: 'medio',
+    idade: 'Filhote',
+    personalidade: 'Olhar doce e jeito calmo. Vai ser a companhia de todas as horas.',
+    historia:
+      'Bebê em busca de uma família amorosa e responsável. Porte pequeno para médio quando crescer. Adoção livre de correntes, com entrevista pela ONG.',
+    castrado: false,
+    vacinado: true,
+    foto: 'lila.jpg',
+    cor: '#E8C9A0',
+    status: 'disponivel',
+    tags: ['filhote', 'porte P/M', 'livre de correntes'],
+    post: 'https://www.instagram.com/p/DdSYCCwlAyD/',
+  },
+  {
+    slug: 'urso',
+    nome: 'Urso', // nome provisório
+    especie: 'cachorro',
+    sexo: 'macho',
+    porte: 'medio',
+    idade: 'Filhote',
+    personalidade: 'Uma bola de pelo que parece um ursinho. Carinho garantido.',
+    historia:
+      'Bebê em busca de uma família amorosa e responsável. Porte pequeno para médio quando crescer. Adoção livre de correntes, com entrevista pela ONG.',
+    castrado: false,
+    vacinado: true,
+    foto: 'urso.jpg',
+    cor: '#8F7A66',
+    status: 'disponivel',
+    tags: ['filhote', 'porte P/M', 'peludo'],
+    post: 'https://www.instagram.com/p/DdSYQhQlCE4/',
+  },
+  {
+    slug: 'flor',
+    nome: 'Flor', // nome provisório
+    especie: 'cachorro',
+    sexo: 'femea',
+    porte: 'medio',
+    idade: 'Filhote',
+    personalidade: 'Elegante de lacinho e cheia de curiosidade pelo mundo.',
+    historia:
+      'Bebê em busca de uma família amorosa e responsável. Porte pequeno para médio quando crescer. Adoção livre de correntes, com entrevista pela ONG.',
+    castrado: false,
+    vacinado: true,
+    foto: 'flor.jpg',
+    cor: '#D7B088',
+    status: 'disponivel',
+    tags: ['filhote', 'porte P/M', 'livre de correntes'],
+    post: 'https://www.instagram.com/p/DdUpW2VGg1v/',
   },
   {
     slug: 'mel',
-    nome: 'Mel',
-    especie: 'gato',
-    sexo: 'femea',
-    porte: 'pequeno',
-    idade: '1 ano',
-    personalidade: 'Curiosa e brincalhona. Ronrona só de ouvir o seu nome.',
-    historia:
-      'Mel chegou filhote, junto com os irmãos, numa caixa deixada na frente do abrigo. É a mais esperta da turma e adora caixas de papelão.',
-    castrado: true,
-    vacinado: true,
-    foto: 'mel.jpg',
-    cor: '#F4C7A1',
-    status: 'disponivel',
-    tags: ['ativa', 'convive com outros gatos'],
-  },
-  {
-    slug: 'thor',
-    nome: 'Thor',
-    especie: 'cachorro',
-    sexo: 'macho',
-    porte: 'grande',
-    idade: '5 anos',
-    personalidade: 'Grandão de coração mole. Quer um quintal e alguém pra correr junto.',
-    historia:
-      'Thor viveu acorrentado por anos até ser resgatado. Demorou pra confiar, mas hoje é o primeiro a abanar o rabo quando chega visita.',
-    castrado: true,
-    vacinado: true,
-    foto: 'thor.jpg',
-    cor: '#C9A27E',
-    status: 'disponivel',
-    tags: ['precisa de espaço', 'guarda'],
-  },
-  {
-    slug: 'luna',
-    nome: 'Luna',
-    especie: 'gato',
-    sexo: 'femea',
-    porte: 'pequeno',
-    idade: '4 anos',
-    personalidade: 'Independente e elegante. Gosta de colo, mas só quando ela decide.',
-    historia:
-      'Luna foi encontrada vivendo embaixo de um carro no centro. É tranquila, limpa e perfeita para apartamento.',
-    castrado: true,
-    vacinado: true,
-    foto: 'luna.jpg',
-    cor: '#B9B4C7',
-    status: 'disponivel',
-    tags: ['apartamento', 'tranquila'],
-  },
-  {
-    slug: 'pipoca',
-    nome: 'Pipoca',
+    nome: 'Mel', // nome provisório
     especie: 'cachorro',
     sexo: 'femea',
-    porte: 'pequeno',
-    idade: '8 meses',
-    personalidade: 'Pura energia. Pula, corre, late pro vento e dorme no seu pé.',
+    porte: 'medio',
+    idade: '6 meses',
+    personalidade: 'Pura alegria. Recebe todo mundo com esse sorriso aí.',
     historia:
-      'Pipoca é filhote de uma mãe resgatada grávida. Nasceu no abrigo e nunca conheceu a rua. Está pronta pra ser a alegria de uma casa.',
+      'Mocinha de 6 meses em busca de uma família. Castração garantida pela ONG.',
     castrado: false,
     vacinado: true,
-    foto: 'pipoca.jpg',
-    cor: '#F2D28C',
+    foto: 'sorriso.jpg',
+    cor: '#E3D2B5',
     status: 'disponivel',
-    tags: ['filhote', 'muito ativa'],
+    tags: ['jovem', 'muito alegre'],
+    post: 'https://www.instagram.com/p/DdShKL8srmC/',
   },
   {
-    slug: 'bento',
-    nome: 'Bento',
-    especie: 'gato',
-    sexo: 'macho',
-    porte: 'medio',
-    idade: '6 anos',
-    personalidade: 'Gato de sofá. Come, dorme, ronrona e repete.',
-    historia:
-      'Bento foi devolvido depois de uma adoção que não deu certo. Não guarda mágoa: só quer um lugar quentinho e uma pessoa pra chamar de dele.',
-    castrado: true,
-    vacinado: true,
-    foto: 'bento.jpg',
-    cor: '#9FB8A4',
-    status: 'disponivel',
-    tags: ['adulto', 'calmo'],
-  },
-  {
-    slug: 'nina',
-    nome: 'Nina',
+    slug: 'canela',
+    nome: 'Canela', // nome provisório
     especie: 'cachorro',
     sexo: 'femea',
-    porte: 'medio',
-    idade: '2 anos',
-    personalidade: 'Tímida no começo, grudenta depois. Adora passear.',
+    porte: 'pequeno',
+    idade: 'Jovem',
+    personalidade: 'Dócil e grudenta. Esse olhar derrete qualquer um.',
+    historia:
+      'Castrada, dócil e pronta para ir pra casa. Faça a diferença na vida de quem precisa: adote esta garota.',
     castrado: true,
     vacinado: true,
-    foto: 'nina.jpg',
-    cor: '#D8A48F',
-    status: 'adotado',
-    dataAdocao: '2026-09',
+    foto: 'canela.jpg',
+    cor: '#C79A6B',
+    status: 'disponivel',
+    tags: ['dócil', 'castrada'],
+    post: 'https://www.instagram.com/p/DdsED-gmkxw/',
   },
   {
-    slug: 'simba',
-    nome: 'Simba',
+    slug: 'tomi',
+    nome: 'Tomi', // nome provisório
     especie: 'gato',
     sexo: 'macho',
     porte: 'medio',
-    idade: '2 anos',
-    personalidade: 'Rei da casa. Laranja, falante e cheio de personalidade.',
+    idade: 'Adulto',
+    personalidade: 'Siamês de olhos azuis, falante e dono da casa.',
+    historia:
+      'Esse nenê está esperando por uma casa. Macho, castrado e dócil. Perfeito pra apartamento.',
     castrado: true,
     vacinado: true,
-    foto: 'simba.jpg',
-    cor: '#F0A868',
-    status: 'adotado',
-    dataAdocao: '2026-08',
+    foto: 'tomi.jpg',
+    cor: '#B9A99A',
+    status: 'disponivel',
+    tags: ['dócil', 'castrado', 'apartamento'],
+    post: 'https://www.instagram.com/p/DdHj2oRpott/',
   },
   {
-    slug: 'fred',
-    nome: 'Fred',
-    especie: 'cachorro',
+    slug: 'teco',
+    nome: 'Teco', // nome provisório
+    especie: 'gato',
     sexo: 'macho',
-    porte: 'pequeno',
-    idade: '7 anos',
-    personalidade: 'Senhorzinho simpático que só queria um sofá. Conseguiu.',
+    porte: 'grande',
+    idade: 'Adulto',
+    personalidade: 'Grandão de 7 quilos e coração mole. Só quer um colo.',
+    historia:
+      'Esse nenê grande de 7 quilos passou por uma cirurgia na boca e está recuperado. Macho, castrado e dócil. Precisa de um lar tranquilo.',
     castrado: true,
     vacinado: true,
-    foto: 'fred.jpg',
-    cor: '#B5A58E',
-    status: 'adotado',
-    dataAdocao: '2026-06',
+    foto: 'preto.jpg',
+    cor: '#5B6470',
+    status: 'disponivel',
+    tags: ['dócil', 'castrado', 'calmo'],
+    post: 'https://www.instagram.com/p/DeT_4J8RQbH/',
+  },
+  {
+    slug: 'princesa',
+    nome: 'Princesa',
+    especie: 'gato',
+    sexo: 'femea',
+    porte: 'medio',
+    idade: 'Adulta',
+    personalidade: 'Extremamente dócil. Uma princesa de verdade esperando o castelo dela.',
+    historia:
+      'Princesa está esperando por uma casinha pra chamar de sua. Fêmea, extremamente dócil. Castração garantida pela ONG.',
+    castrado: false,
+    vacinado: true,
+    foto: 'princesa.jpg',
+    cor: '#8A8F96',
+    status: 'disponivel',
+    tags: ['muito dócil', 'calma'],
+    post: 'https://www.instagram.com/p/DfVW-xSncUo/',
   },
 ];
 

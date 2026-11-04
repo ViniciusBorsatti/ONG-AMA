@@ -100,6 +100,11 @@ const jsonLd = {
                 <a href="/#como-adotar" class="btn btn--claro">
                   Como funciona
                 </a>
+                {animal.post && (
+                  <a href={animal.post} target="_blank" rel="noopener" class="animal__post">
+                    <Icone nome="instagram" /> Ver no Instagram
+                  </a>
+                )}
               </div>
             )
           }
@@ -258,6 +263,21 @@ const jsonLd = {
     flex-wrap: wrap;
     gap: 14px;
     margin-top: 32px;
+  }
+
+  .animal__post {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 15px 10px;
+    text-decoration: none;
+    font-weight: 800;
+    color: var(--verde);
+  }
+
+  .animal__post :global(svg) {
+    width: 20px;
+    height: 20px;
   }
 
   .animal__adotado {
