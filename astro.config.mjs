@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://ama-concordia.vercel.app',
+  site: 'https://ong-ama.vercel.app',
   integrations: [sitemap()],
   trailingSlash: 'always',
   build: { format: 'directory' },
