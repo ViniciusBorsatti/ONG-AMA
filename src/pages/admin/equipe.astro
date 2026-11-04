@@ -1,0 +1,121 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import Icone from '../../components/Icone.astro';
+import { supabaseAdmin } from '../../lib/supabase';
+
+const admin = supabaseAdmin();
+let erro: string | null = null;
+let aviso: string | null = admin ? null : 'Para criar contas, falta configurar a SUPABASE_SERVICE_ROLE_KEY na Vercel.';
+
+if (Astro.request.method === 'POST' && admin) {
+  const form = await Astro.request.formData();
+  const email = String(form.get('email') ?? '').trim();
+  const senha = String(form.get('senha') ?? '');
+  const nome = String(form.get('nome') ?? '').trim();
+  if (!email || senha.length < 8) {
+    erro = 'Informe o e-mail e uma senha com pelo menos 8 caracteres.';
+  } else {
+    const { error } = await admin.auth.admin.createUser({
+      email,
+      password: senha,
+      email_confirm: true,
+      user_metadata: { nome },
+    });
+    if (error) erro = `Não consegui criar: ${error.message}`;
+    else return Astro.redirect('/admin/equipe/?ok=equipe');
+  }
+}
+
+const { data } = admin ? await admin.auth.admin.listUsers({ perPage: 100 }) : { data: { users: [] } };
+const pessoas = data?.users ?? [];
+---
+
+<Admin titulo="Equipe" erro={erro} aviso={aviso}>
+  <div class="admin__cabeca">
+    <h1>Equipe</h1>
+  </div>
+
+  <ul class="pessoas">
+    {
+      pessoas.map((p) => (
+        <li>
+          <span class="pessoas__avatar"><Icone nome="coracao" /></span>
+          <span>
+            <strong>{(p.user_metadata as { nome?: string })?.nome || p.email}</strong>
+            <small>{p.email}{p.id === Astro.locals.usuario.id ? ' · você' : ''}</small>
+          </span>
+        </li>
+      ))
+    }
+  </ul>
+
+  <h2>Adicionar alguém</h2>
+  <form method="post" class="form">
+    <div class="form__linha">
+      <label class="campo">
+        <span>Nome</span>
+        <input type="text" name="nome" placeholder="Como ela quer ser chamada" />
+      </label>
+      <label class="campo">
+        <span>E-mail</span>
+        <input type="email" name="email" required inputmode="email" autocomplete="off" />
+      </label>
+    </div>
+    <label class="campo">
+      <span>Senha inicial</span>
+      <input type="text" name="senha" required minlength="8" autocomplete="off" placeholder="Mínimo 8 caracteres" />
+      <small>Passe a senha pra pessoa por WhatsApp. Ela entra em /admin com o e-mail e essa senha.</small>
+    </label>
+    <div class="form__acoes">
+      <button type="submit" class="btn" disabled={!admin}><Icone nome="pata" /> Criar conta</button>
+    </div>
+  </form>
+</Admin>
+
+<style>
+  .pessoas {
+    list-style: none;
+    margin: 0 0 32px;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+
+  .pessoas li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    background: var(--branco);
+    border-radius: 16px;
+  }
+
+  .pessoas li > span:last-child {
+    display: grid;
+  }
+
+  .pessoas small {
+    color: var(--tinta-suave);
+  }
+
+  .pessoas__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--verde-claro);
+    color: var(--verde);
+    display: grid;
+    place-items: center;
+    flex: none;
+  }
+
+  .pessoas__avatar :global(svg) {
+    width: 20px;
+    height: 20px;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+  }
+</style>

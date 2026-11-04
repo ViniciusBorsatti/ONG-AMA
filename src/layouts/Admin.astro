@@ -1,0 +1,293 @@
+---
+import '../styles/global.css';
+import { site } from '../data/site';
+import Logo from '../components/Logo.astro';
+import Icone from '../components/Icone.astro';
+
+interface Props {
+  titulo: string;
+  logado?: boolean;
+  erro?: string | null;
+  aviso?: string | null;
+}
+const { titulo, logado = true, erro = null, aviso = null } = Astro.props;
+const ok = Astro.url.searchParams.get('ok');
+const mensagens: Record<string, string> = {
+  salvo: 'Animal salvo! Já está no site.',
+  adotado: 'Que bom! Marcado como adotado.',
+  disponivel: 'Voltou pra lista de disponíveis.',
+  excluido: 'Animal excluído.',
+  equipe: 'Conta criada. Já pode entrar com e-mail e senha.',
+};
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>{titulo} · Painel {site.nome}</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#2f7a2b" />
+  </head>
+  <body class="admin">
+    <header class="admin__topo">
+      <div class="container admin__linha">
+        <Logo />
+        {
+          logado && (
+            <nav class="admin__nav" aria-label="Painel">
+              <a href="/admin/">Animais</a>
+              <a href="/admin/equipe/">Equipe</a>
+              <a href="/" target="_blank" rel="noopener">Ver site</a>
+              <form method="post" action="/admin/sair/">
+                <button type="submit" class="admin__sair">Sair</button>
+              </form>
+            </nav>
+          )
+        }
+      </div>
+    </header>
+
+    <main class="container admin__main">
+      {ok && mensagens[ok] && <p class="alerta alerta--ok"><Icone nome="check" /> {mensagens[ok]}</p>}
+      {aviso && <p class="alerta alerta--aviso">{aviso}</p>}
+      {erro && <p class="alerta alerta--erro"><Icone nome="x" /> {erro}</p>}
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  .admin {
+    background: var(--areia);
+    font-size: 16px;
+  }
+
+  .admin__topo {
+    background: var(--branco);
+    border-bottom: 1px solid rgb(27 74 28 / 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .admin__linha {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 64px;
+    flex-wrap: wrap;
+    padding-block: 8px;
+  }
+
+  .admin__nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .admin__nav a,
+  .admin__sair {
+    padding: 8px 14px;
+    border-radius: 999px;
+    font: inherit;
+    font-weight: 800;
+    color: var(--verde-profundo);
+    text-decoration: none;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .admin__nav a:hover,
+  .admin__sair:hover {
+    background: var(--verde-claro);
+  }
+
+  .admin__sair {
+    color: #a33;
+  }
+
+  .admin__main {
+    padding-block: 28px 80px;
+    max-width: 860px;
+  }
+
+  .admin h1 {
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+  }
+
+  .admin__cabeca {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .alerta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    border-radius: 16px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+  .alerta :global(svg) {
+    width: 20px;
+    height: 20px;
+    flex: none;
+  }
+
+  .alerta--ok {
+    background: var(--verde-claro);
+    color: var(--verde-escuro);
+  }
+
+  .alerta--erro {
+    background: #fde3e1;
+    color: #8a1f1b;
+  }
+
+  .alerta--aviso {
+    background: var(--laranja-claro);
+    color: #7a4410;
+  }
+
+  /* Formulários */
+  .form {
+    display: grid;
+    gap: 18px;
+    background: var(--branco);
+    padding: clamp(20px, 4vw, 32px);
+    border-radius: var(--raio);
+    border: 1px solid rgb(27 74 28 / 0.08);
+  }
+
+  .form__linha {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .campo {
+    display: grid;
+    gap: 6px;
+  }
+
+  .campo > span,
+  .campo > label:first-child {
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: var(--verde-profundo);
+  }
+
+  .campo small {
+    color: var(--tinta-suave);
+    font-size: 0.82rem;
+  }
+
+  .campo input[type='text'],
+  .campo input[type='email'],
+  .campo input[type='password'],
+  .campo input[type='url'],
+  .campo input[type='date'],
+  .campo select,
+  .campo textarea {
+    font: inherit;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1.5px solid rgb(27 74 28 / 0.18);
+    background: var(--creme);
+    color: var(--tinta);
+    width: 100%;
+  }
+
+  .campo input:focus,
+  .campo select:focus,
+  .campo textarea:focus {
+    outline: 3px solid var(--verde-suave);
+    border-color: var(--verde);
+  }
+
+  .campo textarea {
+    min-height: 110px;
+    resize: vertical;
+  }
+
+  .campo input[type='file'] {
+    font: inherit;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1.5px dashed rgb(27 74 28 / 0.3);
+    background: var(--verde-claro);
+    width: 100%;
+  }
+
+  .opcoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .opcoes label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1.5px solid rgb(27 74 28 / 0.18);
+    background: var(--creme);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .opcoes label:has(input:checked) {
+    background: var(--verde);
+    border-color: var(--verde);
+    color: #fff;
+  }
+
+  .opcoes input {
+    accent-color: var(--verde);
+  }
+
+  .form__acoes {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 6px;
+  }
+
+  .btn[type='submit'] {
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .btn--perigo {
+    --bg: #c2362f;
+    box-shadow: none;
+  }
+
+  .link-simples {
+    font-weight: 800;
+    color: var(--verde);
+    text-decoration: none;
+    padding: 10px 6px;
+  }
+
+  @media (max-width: 600px) {
+    .form__linha {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

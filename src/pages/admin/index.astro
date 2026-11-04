@@ -1,0 +1,204 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import Icone from '../../components/Icone.astro';
+import { rotulos, mesAno } from '../../data/animais';
+import { listarAnimais, separar } from '../../lib/db';
+
+const { disponiveis, adotados } = separar(await listarAnimais(Astro.locals.supabase));
+const grupos = [
+  { titulo: 'Procurando um lar', lista: disponiveis, vazio: 'Nenhum animal disponível. Cadastre o primeiro!' },
+  { titulo: 'Já adotados', lista: adotados, vazio: 'Ainda ninguém marcado como adotado.' },
+];
+---
+
+<Admin titulo="Animais">
+  <div class="admin__cabeca">
+    <h1>Animais</h1>
+    <a href="/admin/novo/" class="btn"><Icone nome="pata" /> Cadastrar animal</a>
+  </div>
+
+  {
+    grupos.map((g) => (
+      <section class="grupo">
+        <h2>
+          {g.titulo} <span class="grupo__n">{g.lista.length}</span>
+        </h2>
+        {g.lista.length === 0 && <p class="grupo__vazio">{g.vazio}</p>}
+        <ul class="lista">
+          {g.lista.map((a) => (
+            <li class:list={['item', { 'item--adotado': a.status === 'adotado' }]}>
+              <a href={`/admin/${a.id}/`} class="item__foto">
+                {a.foto ? <img src={a.foto} alt="" width="96" height="96" loading="lazy" /> : <Icone nome="pata" />}
+              </a>
+              <div class="item__info">
+                <a href={`/admin/${a.id}/`} class="item__nome">{a.nome}</a>
+                <span class="item__meta">
+                  {rotulos.especie[a.especie]} · {rotulos.sexo[a.sexo]} · {a.idade}
+                  {a.status === 'adotado' && a.data_adocao && ` · adotad${a.sexo === 'femea' ? 'a' : 'o'} em ${mesAno(a.data_adocao)}`}
+                </span>
+                <span class="item__selos">
+                  <span class:list={['selo', a.castrado ? 'selo--ok' : 'selo--aviso']}>{a.castrado ? 'Castrado' : 'Não castrado'}</span>
+                  {!a.foto && <span class="selo selo--aviso">Sem foto</span>}
+                </span>
+              </div>
+              <div class="item__acoes">
+                <a href={`/admin/${a.id}/`} class="item__btn">Editar</a>
+                <form method="post" action={`/admin/${a.id}/status/`}>
+                  <input type="hidden" name="status" value={a.status === 'adotado' ? 'disponivel' : 'adotado'} />
+                  <button type="submit" class:list={['item__btn', { 'item__btn--verde': a.status === 'disponivel' }]}>
+                    {a.status === 'adotado' ? 'Voltar p/ disponível' : 'Foi adotado 💚'}
+                  </button>
+                </form>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</Admin>
+
+<style>
+  .grupo {
+    margin-top: 28px;
+  }
+
+  .grupo h2 {
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .grupo__n {
+    font-family: var(--fonte-texto);
+    font-size: 0.85rem;
+    font-weight: 800;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: var(--verde-claro);
+    color: var(--verde-escuro);
+  }
+
+  .grupo__vazio {
+    color: var(--tinta-suave);
+    padding: 20px;
+    background: var(--branco);
+    border-radius: 18px;
+  }
+
+  .lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+
+  .item {
+    display: grid;
+    grid-template-columns: 72px 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 12px;
+    background: var(--branco);
+    border-radius: 20px;
+    border: 1px solid rgb(27 74 28 / 0.08);
+  }
+
+  .item--adotado {
+    opacity: 0.8;
+  }
+
+  .item__foto {
+    width: 72px;
+    height: 72px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--verde-claro);
+    display: grid;
+    place-items: center;
+    color: var(--verde);
+  }
+
+  .item__foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .item__foto :global(svg) {
+    width: 28px;
+    height: 28px;
+  }
+
+  .item__info {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .item__nome {
+    font-family: var(--fonte-titulo);
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--verde-profundo);
+  }
+
+  .item__meta {
+    font-size: 0.88rem;
+    color: var(--tinta-suave);
+  }
+
+  .item__selos {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .item__acoes {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: stretch;
+  }
+
+  .item__btn {
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 800;
+    padding: 9px 14px;
+    border-radius: 999px;
+    border: 1.5px solid rgb(27 74 28 / 0.18);
+    background: var(--creme);
+    color: var(--verde-profundo);
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    white-space: nowrap;
+    width: 100%;
+  }
+
+  .item__btn--verde {
+    background: var(--verde);
+    border-color: var(--verde);
+    color: #fff;
+  }
+
+  @media (max-width: 560px) {
+    .item {
+      grid-template-columns: 64px 1fr;
+    }
+
+    .item__acoes {
+      grid-column: 1 / -1;
+      flex-direction: row;
+    }
+
+    .item__acoes form {
+      flex: 1;
+    }
+  }
+</style>

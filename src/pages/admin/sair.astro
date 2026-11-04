@@ -1,0 +1,7 @@
+---
+import { limparSessao } from '../../lib/supabase';
+if (Astro.request.method === 'POST') {
+  limparSessao(Astro.cookies);
+}
+return Astro.redirect('/admin/login/');
+---

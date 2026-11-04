@@ -22,7 +22,7 @@ const whatsapp = linkWhatsapp(`Olá! Tenho interesse em adotar ${animal.sexo ===
     {
       adotado ? (
         <span class="card__faixa">
-          <Icone nome="casa" /> Adotad{animal.sexo === 'femea' ? 'a' : 'o'}{animal.dataAdocao ? ` em ${mesAno(animal.dataAdocao)}` : ''}
+          <Icone nome="casa" /> Adotad{animal.sexo === 'femea' ? 'a' : 'o'}{animal.data_adocao ? ` em ${mesAno(animal.data_adocao)}` : ''}
         </span>
       ) : (
         <span class="card__pata">

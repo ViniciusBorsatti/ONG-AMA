@@ -1,13 +1,14 @@
 ---
 import Base from '../layouts/Base.astro';
 import { site, linkWhatsapp } from '../data/site';
-import { disponiveis, adotados } from '../data/animais';
+import { listarAnimais, separar } from '../lib/db';
 import CardAnimal from '../components/CardAnimal.astro';
 import Foto from '../components/Foto.astro';
 import Letreiro from '../components/Letreiro.astro';
 import Patas from '../components/Patas.astro';
 import Icone from '../components/Icone.astro';
 
+const { disponiveis, adotados } = separar(await listarAnimais());
 const destaques = disponiveis.slice(0, 3);
 const caes = disponiveis.filter((a) => a.especie === 'cachorro').length;
 const gatos = disponiveis.filter((a) => a.especie === 'gato').length;
@@ -39,7 +40,7 @@ const icones = { pix: 'pix', coracao: 'coracao', mao: 'mao', caixa: 'caixa' } as
         {
           destaques.map((a, i) => (
             <a href={`/animais/${a.slug}/`} class:list={['topo__foto', `topo__foto--${i + 1}`, 'flutua']} style={`--d:${i * 0.9}s`}>
-              <Foto animal={a} largura={480} sizes="(min-width: 900px) 30vw, 60vw" prioridade={i === 0} />
+              <Foto animal={a} prioridade={i === 0} />
               <span class="topo__nome">{a.nome}</span>
             </a>
           ))

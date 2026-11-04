@@ -1,0 +1,23 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import FormAnimal from '../../components/FormAnimal.astro';
+import { salvarAnimal } from '../../lib/salvar';
+
+let erro: string | null = null;
+let valores: Record<string, string> = {};
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const r = await salvarAnimal(Astro.locals.supabase, form, null);
+  if (r.ok) return Astro.redirect('/admin/?ok=salvo');
+  erro = r.erro ?? 'Erro desconhecido.';
+  for (const [k, val] of form.entries()) if (typeof val === 'string') valores[k] = val;
+}
+---
+
+<Admin titulo="Cadastrar animal" erro={erro}>
+  <div class="admin__cabeca">
+    <h1>Cadastrar animal</h1>
+  </div>
+  <FormAnimal animal={null} valores={valores} />
+</Admin>

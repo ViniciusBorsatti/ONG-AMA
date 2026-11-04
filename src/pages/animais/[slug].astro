@@ -1,16 +1,16 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { site, linkWhatsapp } from '../../data/site';
-import { animais, disponiveis, rotulos, mesAno, type Animal } from '../../data/animais';
+import { rotulos, mesAno } from '../../data/animais';
+import { listarAnimais, separar } from '../../lib/db';
 import Foto from '../../components/Foto.astro';
 import CardAnimal from '../../components/CardAnimal.astro';
 import Icone from '../../components/Icone.astro';
 
-export function getStaticPaths() {
-  return animais.map((animal) => ({ params: { slug: animal.slug }, props: { animal } }));
-}
-
-const { animal } = Astro.props as { animal: Animal };
+const todos = await listarAnimais();
+const animal = todos.find((a) => a.slug === Astro.params.slug);
+if (!animal) return new Response(null, { status: 404 });
+const { disponiveis } = separar(todos);
 const adotado = animal.status === 'adotado';
 const fem = animal.sexo === 'femea';
 const outros = disponiveis.filter((a) => a.slug !== animal.slug).slice(0, 3);
@@ -44,12 +44,12 @@ const jsonLd = {
 
       <div class="animal__grade">
         <div class="animal__foto entra-foto">
-          <Foto animal={animal} largura={960} sizes="(min-width: 900px) 45vw, 100vw" prioridade class="animal__img" />
+          <Foto animal={animal} prioridade class="animal__img" />
           {
             adotado && (
               <span class="animal__faixa">
                 <Icone nome="casa" /> Adotad{fem ? 'a' : 'o'}
-                {animal.dataAdocao ? ` em ${mesAno(animal.dataAdocao)}` : ''}
+                {animal.data_adocao ? ` em ${mesAno(animal.data_adocao)}` : ''}
               </span>
             )
           }
@@ -64,7 +64,7 @@ const jsonLd = {
           {animal.historia && <p class="animal__historia entra" style="--i:4">{animal.historia}</p>}
 
           {
-            animal.tags && (
+            animal.tags.length > 0 && (
               <ul class="animal__tags entra" style="--i:5">
                 {animal.tags.map((t) => (
                   <li class="selo">{t}</li>

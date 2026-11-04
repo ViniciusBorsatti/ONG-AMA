@@ -1,0 +1,9 @@
+---
+import { mudarStatus } from '../../../lib/salvar';
+
+if (Astro.request.method !== 'POST') return Astro.redirect('/admin/');
+const form = await Astro.request.formData();
+const status = form.get('status') === 'adotado' ? 'adotado' : 'disponivel';
+const erro = await mudarStatus(Astro.locals.supabase, Astro.params.id!, status);
+return Astro.redirect(erro ? '/admin/' : `/admin/?ok=${status}`);
+---

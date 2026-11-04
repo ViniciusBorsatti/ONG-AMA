@@ -1,0 +1,500 @@
+/* Camada de movimento. Tudo em CSS, sem JavaScript.
+   - Entrada do topo (keyframes)
+   - Revelação por scroll (animation-timeline: view) em navegadores com suporte
+   - Contadores animados com @property
+   - Sombra do cabeçalho ao rolar (animation-timeline: scroll)
+   Tudo respeita prefers-reduced-motion. */
+
+@property --contador {
+  syntax: '<integer>';
+  inherits: false;
+  initial-value: 0;
+}
+
+/* Entrada do topo */
+@keyframes subir {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes surgir {
+  from {
+    opacity: 0;
+    transform: scale(0.92) rotate(-4deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes flutuar {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--rot, 0deg));
+  }
+  50% {
+    transform: translateY(-14px) rotate(calc(var(--rot, 0deg) + 3deg));
+  }
+}
+
+@keyframes pulsar {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.18);
+  }
+}
+
+@keyframes balancar {
+  0%,
+  100% {
+    transform: rotate(-8deg);
+  }
+  50% {
+    transform: rotate(8deg);
+  }
+}
+
+@keyframes deslizar {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes patinha-cair {
+  0% {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.6);
+  }
+  30% {
+    opacity: 0.55;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.entra {
+  animation: subir 0.9s var(--suave) both;
+  animation-delay: calc(var(--i, 0) * 120ms);
+}
+
+.entra-foto {
+  animation: surgir 1.1s var(--suave) both;
+  animation-delay: 200ms;
+}
+
+.flutua {
+  animation: flutuar 6s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+
+.pulsa {
+  animation: pulsar 1.6s ease-in-out infinite;
+}
+
+.balanca {
+  transform-origin: 50% 90%;
+  animation: balancar 2.4s ease-in-out infinite;
+}
+
+.gira {
+  animation: girar 24s linear infinite;
+}
+
+/* Letreiro contínuo */
+.letreiro__trilho {
+  animation: deslizar 28s linear infinite;
+}
+
+.letreiro:hover .letreiro__trilho {
+  animation-play-state: paused;
+}
+
+/* Revelação por scroll */
+@keyframes revelar {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes revelar-lado {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes contar {
+  from {
+    --contador: 0;
+  }
+  to {
+    --contador: var(--alvo);
+  }
+}
+
+@keyframes sombra-topo {
+  from {
+    box-shadow: 0 0 0 0 rgb(17 48 15 / 0);
+    background: rgb(251 248 241 / 0.6);
+  }
+  to {
+    box-shadow: 0 10px 30px -18px rgb(17 48 15 / 0.35);
+    background: rgb(251 248 241 / 0.92);
+  }
+}
+
+@keyframes crescer-foto {
+  from {
+    transform: scale(1.12);
+    border-radius: 60px;
+  }
+  to {
+    transform: scale(1);
+    border-radius: var(--raio);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .revela {
+    animation: revelar 1s var(--suave) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 55%;
+  }
+
+  .revela-lado {
+    animation: revelar-lado 1s var(--suave) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 50%;
+  }
+
+  .grade-revela > * {
+    animation: revelar 0.9s var(--suave) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 45%;
+  }
+
+  .contador {
+    animation: contar 1.6s var(--suave) both;
+    animation-timeline: view();
+    animation-range: entry 10% entry 70%;
+  }
+
+  .contador::before {
+    content: counter(contador);
+    counter-reset: contador var(--contador);
+  }
+
+  .cabecalho {
+    animation: sombra-topo linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 120px;
+  }
+
+  .cresce-foto {
+    animation: crescer-foto linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 40%;
+  }
+}
+
+@supports not (animation-timeline: view()) {
+  .contador::before {
+    content: attr(data-alvo);
+  }
+}
+
+/* Menos movimento */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .letreiro__trilho,
+  .flutua,
+  .pulsa,
+  .balanca,
+  .gira {
+    animation: none !important;
+  }
+
+  .revela,
+  .revela-lado,
+  .grade-revela > *,
+  .contador,
+  .cabecalho,
+  .cresce-foto {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+
+  .contador::before {
+    content: attr(data-alvo);
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
+.cabecalho[data-astro-cid-nen7h5rs] {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #fbf8f199;
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+}
+
+.cabecalho__linha[data-astro-cid-nen7h5rs] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 76px;
+}
+
+.menu[data-astro-cid-nen7h5rs] {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.menu[data-astro-cid-nen7h5rs] > a[data-astro-cid-nen7h5rs]:not(.btn) {
+  position: relative;
+  padding: 8px 14px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  color: var(--verde-profundo);
+  transition: background .3s, color .3s;
+}
+
+.menu[data-astro-cid-nen7h5rs] > a[data-astro-cid-nen7h5rs]:not(.btn):hover {
+  background: var(--verde-claro);
+  color: var(--verde-escuro);
+}
+
+.menu__cta[data-astro-cid-nen7h5rs] {
+  margin-left: 10px;
+  padding: 11px 20px;
+}
+
+.menu__botao[data-astro-cid-nen7h5rs] {
+  display: none;
+}
+
+@media (width <= 760px) {
+  .menu__botao[data-astro-cid-nen7h5rs] {
+    display: grid;
+    gap: 5px;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  .menu__botao[data-astro-cid-nen7h5rs] span[data-astro-cid-nen7h5rs] {
+    display: block;
+    width: 24px;
+    height: 2.5px;
+    border-radius: 2px;
+    background: var(--verde-profundo);
+    transition: transform .35s var(--suave), opacity .2s;
+    transform-origin: center;
+  }
+
+  .menu__toggle[data-astro-cid-nen7h5rs]:checked ~ .menu__botao[data-astro-cid-nen7h5rs] span[data-astro-cid-nen7h5rs]:first-child {
+    transform: translateY(7.5px) rotate(45deg);
+  }
+
+  .menu__toggle[data-astro-cid-nen7h5rs]:checked ~ .menu__botao[data-astro-cid-nen7h5rs] span[data-astro-cid-nen7h5rs]:nth-child(2) {
+    opacity: 0;
+  }
+
+  .menu__toggle[data-astro-cid-nen7h5rs]:checked ~ .menu__botao[data-astro-cid-nen7h5rs] span[data-astro-cid-nen7h5rs]:nth-child(3) {
+    transform: translateY(-7.5px) rotate(-45deg);
+  }
+
+  .menu[data-astro-cid-nen7h5rs] {
+    position: absolute;
+    left: var(--gutter);
+    right: var(--gutter);
+    top: calc(100% + 8px);
+    flex-direction: column;
+    align-items: stretch;
+    padding: 14px;
+    background: var(--branco);
+    border-radius: 22px;
+    box-shadow: var(--sombra);
+    opacity: 0;
+    transform: translateY(-12px) scale(.98);
+    pointer-events: none;
+    transition: opacity .3s, transform .4s var(--suave);
+  }
+
+  .menu[data-astro-cid-nen7h5rs] > a[data-astro-cid-nen7h5rs]:not(.btn) {
+    padding: 12px 16px;
+    font-size: 1.05rem;
+  }
+
+  .menu__cta[data-astro-cid-nen7h5rs] {
+    margin: 8px 0 0;
+  }
+
+  .menu__toggle[data-astro-cid-nen7h5rs]:checked ~ .menu[data-astro-cid-nen7h5rs] {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+}
+.rodape[data-astro-cid-jo6i4kqk] {
+  background: var(--verde-profundo);
+  color: #ffffffd1;
+  padding-top: clamp(60px, 8vw, 100px);
+  position: relative;
+  overflow: hidden;
+}
+
+.rodape[data-astro-cid-jo6i4kqk]:before {
+  content: "";
+  position: absolute;
+  inset: auto -10% -40% auto;
+  width: 60vw;
+  height: 60vw;
+  max-width: 700px;
+  max-height: 700px;
+  background: radial-gradient(circle, #2f7a2b80, #0000 65%);
+  pointer-events: none;
+}
+
+.rodape__grade[data-astro-cid-jo6i4kqk] {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 48px;
+  position: relative;
+}
+
+.rodape__sobre[data-astro-cid-jo6i4kqk] p[data-astro-cid-jo6i4kqk] {
+  margin-top: 16px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.rodape__sobre[data-astro-cid-jo6i4kqk] .rodape__descricao[data-astro-cid-jo6i4kqk] {
+  font-weight: 400;
+  color: #ffffffb3;
+  max-width: 380px;
+}
+
+.rodape[data-astro-cid-jo6i4kqk] .rodape__logo {
+  color: #fff;
+}
+
+.rodape[data-astro-cid-jo6i4kqk] .rodape__logo small {
+  color: #fff9;
+}
+
+.rodape[data-astro-cid-jo6i4kqk] .rodape__logo .logo__marca {
+  background: #fff;
+  color: var(--verde);
+}
+
+.rodape[data-astro-cid-jo6i4kqk] .rodape__logo .logo__coracao {
+  color: var(--verde);
+}
+
+.rodape[data-astro-cid-jo6i4kqk] .rodape__logo .logo__pata {
+  color: #fff;
+}
+
+.rodape[data-astro-cid-jo6i4kqk] h4[data-astro-cid-jo6i4kqk] {
+  color: #fff;
+  font-size: 1.25rem;
+  margin-bottom: 12px;
+}
+
+address[data-astro-cid-jo6i4kqk] {
+  font-style: normal;
+  margin-bottom: 14px;
+  line-height: 1.7;
+}
+
+.rodape__links[data-astro-cid-jo6i4kqk] {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.rodape__link[data-astro-cid-jo6i4kqk] {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #fff;
+  font-weight: 700;
+  width: fit-content;
+  transition: transform .3s var(--mola), color .3s;
+}
+
+.rodape__link[data-astro-cid-jo6i4kqk] svg {
+  width: 20px;
+  height: 20px;
+  color: var(--verde-suave);
+}
+
+.rodape__link[data-astro-cid-jo6i4kqk]:hover {
+  transform: translateX(4px);
+  color: var(--verde-suave);
+}
+
+.rodape__base[data-astro-cid-jo6i4kqk] {
+  margin-top: clamp(40px, 6vw, 70px);
+  padding-block: 24px;
+  border-top: 1px solid #ffffff1f;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: .85rem;
+  color: #ffffff8c;
+}
+
+@media (width <= 820px) {
+  .rodape__grade[data-astro-cid-jo6i4kqk] {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+}

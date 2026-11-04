@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
-Sitemap: https://ong-ama.vercel.app/sitemap-index.xml
+Disallow: /admin
+Sitemap: https://ong-ama.vercel.app/sitemap.xml

@@ -1,0 +1,57 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import Icone from '../../components/Icone.astro';
+import { supabasePublico, salvarSessao, supabaseConfigurado } from '../../lib/supabase';
+
+let erro: string | null = null;
+const para = Astro.url.searchParams.get('para') || '/admin/';
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const email = String(form.get('email') ?? '').trim();
+  const senha = String(form.get('senha') ?? '');
+  if (!supabaseConfigurado) {
+    erro = 'O painel ainda não está configurado (faltam as chaves do Supabase).';
+  } else {
+    const { data, error } = await supabasePublico().auth.signInWithPassword({ email, password: senha });
+    if (error || !data.session) {
+      erro = 'E-mail ou senha incorretos.';
+    } else {
+      salvarSessao(Astro.cookies, data.session.access_token, data.session.refresh_token);
+      return Astro.redirect(para.startsWith('/admin') ? para : '/admin/');
+    }
+  }
+}
+---
+
+<Admin titulo="Entrar" logado={false} erro={erro}>
+  <div class="login">
+    <h1>Painel da ONG</h1>
+    <p>Entre com o e-mail e a senha que você recebeu.</p>
+    <form method="post" class="form">
+      <label class="campo">
+        <span>E-mail</span>
+        <input type="email" name="email" required autocomplete="username" inputmode="email" />
+      </label>
+      <label class="campo">
+        <span>Senha</span>
+        <input type="password" name="senha" required autocomplete="current-password" />
+      </label>
+      <div class="form__acoes">
+        <button type="submit" class="btn"><Icone nome="pata" /> Entrar</button>
+      </div>
+    </form>
+  </div>
+</Admin>
+
+<style>
+  .login {
+    max-width: 440px;
+    margin: 40px auto 0;
+  }
+
+  .login p {
+    margin: 10px 0 24px;
+    color: var(--tinta-suave);
+  }
+</style>

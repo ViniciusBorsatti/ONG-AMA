@@ -1,11 +1,11 @@
 import { defineConfig } from 'astro/config';
-import sitemap from '@astrojs/sitemap';
+import vercel from '@astrojs/vercel';
 
 export default defineConfig({
   site: 'https://ong-ama.vercel.app',
-  integrations: [sitemap()],
+  output: 'server',
+  adapter: vercel(),
   trailingSlash: 'always',
-  build: { format: 'directory' },
   vite: {
     // O lightningcss dobra `animation-timeline` dentro do atalho `animation`
     // e os navegadores descartam a regra. Sem minificar, as animações por scroll funcionam.

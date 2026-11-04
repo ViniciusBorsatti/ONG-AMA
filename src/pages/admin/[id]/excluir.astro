@@ -1,0 +1,43 @@
+---
+import Admin from '../../../layouts/Admin.astro';
+import Icone from '../../../components/Icone.astro';
+import { buscarAnimalPorId } from '../../../lib/db';
+import { excluirAnimal } from '../../../lib/salvar';
+
+const animal = await buscarAnimalPorId(Astro.params.id!, Astro.locals.supabase);
+if (!animal) return Astro.redirect('/admin/');
+
+let erro: string | null = null;
+if (Astro.request.method === 'POST') {
+  erro = await excluirAnimal(Astro.locals.supabase, animal);
+  if (!erro) return Astro.redirect('/admin/?ok=excluido');
+}
+---
+
+<Admin titulo={`Excluir ${animal.nome}`} erro={erro}>
+  <div class="confirma">
+    <h1>Excluir {animal.nome}?</h1>
+    <p>
+      Isso tira {animal.nome} do site de vez. Se {animal.sexo === 'femea' ? 'ela' : 'ele'} foi adotad{animal.sexo === 'femea' ? 'a' : 'o'}, o melhor é
+      <strong>marcar como adotado</strong> em vez de excluir: assim aparece nos finais felizes.
+    </p>
+    <form method="post" class="form__acoes">
+      <button type="submit" class="btn btn--perigo"><Icone nome="x" /> Sim, excluir</button>
+      <a href={`/admin/${animal.id}/`} class="link-simples">Voltar</a>
+    </form>
+  </div>
+</Admin>
+
+<style>
+  .confirma {
+    max-width: 520px;
+    background: var(--branco);
+    padding: 28px;
+    border-radius: var(--raio);
+  }
+
+  .confirma p {
+    margin: 14px 0 24px;
+    color: var(--tinta-suave);
+  }
+</style>

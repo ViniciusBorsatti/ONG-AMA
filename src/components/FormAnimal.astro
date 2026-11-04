@@ -1,0 +1,159 @@
+---
+import type { Animal } from '../data/animais';
+import Icone from './Icone.astro';
+
+interface Props {
+  animal: Animal | null;
+  valores?: Record<string, string>; // o que a pessoa digitou, pra não perder se der erro
+}
+const { animal, valores = {} } = Astro.props;
+const v = (campo: keyof Animal | string, padrao = '') => valores[campo] ?? String((animal as any)?.[campo] ?? padrao);
+const marcado = (campo: string, valor: string) => v(campo) === valor;
+const check = (campo: 'castrado' | 'vacinado', padrao: boolean) =>
+  campo in valores ? valores[campo] === 'on' : (animal?.[campo] ?? padrao);
+const tags = valores.tags ?? (animal?.tags ?? []).join(', ');
+---
+
+<form method="post" enctype="multipart/form-data" class="form">
+  <div class="form__foto">
+    <div class="form__foto-atual">
+      {animal?.foto ? <img src={animal.foto} alt="" width="160" height="160" /> : <Icone nome="pata" />}
+    </div>
+    <label class="campo">
+      <span>{animal?.foto ? 'Trocar a foto' : 'Foto'}</span>
+      <input type="file" name="foto" accept="image/*" />
+      <small>Pode tirar na hora pelo celular. A foto é cortada em quadrado automaticamente.</small>
+    </label>
+  </div>
+
+  <div class="form__linha">
+    <label class="campo">
+      <span>Nome</span>
+      <input type="text" name="nome" required value={v('nome')} autocomplete="off" />
+    </label>
+    <label class="campo">
+      <span>Idade</span>
+      <input type="text" name="idade" value={v('idade')} placeholder="Ex: 2 anos, filhote, 6 meses" />
+    </label>
+  </div>
+
+  <div class="campo">
+    <span>Espécie</span>
+    <div class="opcoes">
+      <label><input type="radio" name="especie" value="cachorro" required checked={marcado('especie', 'cachorro')} /> Cachorro</label>
+      <label><input type="radio" name="especie" value="gato" checked={marcado('especie', 'gato')} /> Gato</label>
+    </div>
+  </div>
+
+  <div class="form__linha">
+    <div class="campo">
+      <span>Sexo</span>
+      <div class="opcoes">
+        <label><input type="radio" name="sexo" value="macho" required checked={marcado('sexo', 'macho')} /> Macho</label>
+        <label><input type="radio" name="sexo" value="femea" checked={marcado('sexo', 'femea')} /> Fêmea</label>
+      </div>
+    </div>
+    <div class="campo">
+      <span>Porte</span>
+      <div class="opcoes">
+        <label><input type="radio" name="porte" value="pequeno" required checked={marcado('porte', 'pequeno')} /> Pequeno</label>
+        <label><input type="radio" name="porte" value="medio" checked={marcado('porte', 'medio')} /> Médio</label>
+        <label><input type="radio" name="porte" value="grande" checked={marcado('porte', 'grande')} /> Grande</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="campo">
+    <span>Saúde</span>
+    <div class="opcoes">
+      <label><input type="checkbox" name="castrado" checked={check('castrado', false)} /> Castrado(a)</label>
+      <label><input type="checkbox" name="vacinado" checked={check('vacinado', true)} /> Vacinado(a)</label>
+    </div>
+  </div>
+
+  <label class="campo">
+    <span>Personalidade (uma frase)</span>
+    <input type="text" name="personalidade" value={v('personalidade')} placeholder="Ex: Calmo, adora colo e dorme no sol." maxlength="120" />
+    <small>Aparece no cartão do animal. Curta e carinhosa.</small>
+  </label>
+
+  <label class="campo">
+    <span>História (opcional)</span>
+    <textarea name="historia" placeholder="Como foi resgatado, como é o jeito dele, o que precisa...">{v('historia')}</textarea>
+  </label>
+
+  <div class="form__linha">
+    <label class="campo">
+      <span>Etiquetas (opcional)</span>
+      <input type="text" name="tags" value={tags} placeholder="dócil, bom com crianças, apartamento" />
+      <small>Separe por vírgula.</small>
+    </label>
+    <label class="campo">
+      <span>Link do post no Instagram (opcional)</span>
+      <input type="url" name="post" value={v('post')} placeholder="https://www.instagram.com/p/..." />
+    </label>
+  </div>
+
+  <div class="form__linha">
+    <div class="campo">
+      <span>Situação</span>
+      <div class="opcoes">
+        <label><input type="radio" name="status" value="disponivel" checked={!marcado('status', 'adotado')} /> Procurando lar</label>
+        <label><input type="radio" name="status" value="adotado" checked={marcado('status', 'adotado')} /> Adotado 💚</label>
+      </div>
+    </div>
+    <label class="campo">
+      <span>Data da adoção</span>
+      <input type="date" name="data_adocao" value={v('data_adocao')} />
+      <small>Só se estiver adotado. Vazio = hoje.</small>
+    </label>
+  </div>
+
+  <div class="form__acoes">
+    <button type="submit" class="btn"><Icone nome="check" /> Salvar</button>
+    <a href="/admin/" class="link-simples">Cancelar</a>
+    {animal && <a href={`/admin/${animal.id}/excluir/`} class="link-simples link-simples--perigo">Excluir animal</a>}
+  </div>
+</form>
+
+<style>
+  .form__foto {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 18px;
+    align-items: center;
+  }
+
+  .form__foto-atual {
+    width: 120px;
+    height: 120px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--verde-claro);
+    display: grid;
+    place-items: center;
+    color: var(--verde);
+  }
+
+  .form__foto-atual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .form__foto-atual :global(svg) {
+    width: 40px;
+    height: 40px;
+  }
+
+  .link-simples--perigo {
+    color: #a33;
+    margin-left: auto;
+  }
+
+  @media (max-width: 480px) {
+    .form__foto {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
