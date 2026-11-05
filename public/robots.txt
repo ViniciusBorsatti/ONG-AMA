@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 Disallow: /admin
-Sitemap: https://ong-ama.vercel.app/sitemap.xml
+Sitemap: https://ongamaconcordia.com.br/sitemap.xml

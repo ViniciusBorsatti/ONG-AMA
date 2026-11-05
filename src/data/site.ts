@@ -8,7 +8,7 @@ export const site = {
   slogan: 'Todo bicho merece um lar.',
   descricao:
     'Resgatamos, cuidamos e encontramos famílias para cães e gatos abandonados em Concórdia e região.',
-  url: 'https://ong-ama.vercel.app',
+  url: 'https://ongamaconcordia.com.br',
 
   endereco: {
     rua: 'R. Catharina Criselda Kirch, nº 600',
